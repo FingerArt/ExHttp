@@ -1,7 +1,6 @@
 package io.chengguo.ohttp;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
@@ -39,7 +38,7 @@ public final class OHttp {
         Log.d(TAG, "addTag = [" + tag + "]");
     }
 
-    public static void cancel(@NonNull String tag) {
+    public static void cancel(String tag) {
         WeakReference<HttpURLConnection> reference = tags.get(tag);
         if (reference != null && reference.get() != null) {
             HttpURLConnection connection = reference.get();

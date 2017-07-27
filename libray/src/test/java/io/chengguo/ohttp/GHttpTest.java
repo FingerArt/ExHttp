@@ -53,7 +53,7 @@ public class GHttpTest {
 
             @Override
             public void onError(Exception e) {
-                System.out.println("e = [" + e + "]");
+                System.out.println("GHttpTest.onError: " + e.toString());
             }
 
             @Override
@@ -61,10 +61,10 @@ public class GHttpTest {
                 System.out.println("GHttpTest.onFinish");
             }
         };
-        OHttp.get().url("http://httpbin.org/delay/3").addQuery("q1", "qv1").build().execute(callback);
-        Thread.sleep(2000);
+        OHttp.get().url("http://httpbin.org/delay/9").addQuery("q1", "qv1").build().execute(callback);
+        Thread.sleep(10000);
         OHttp.cancel(Utils.generateTag("http://httpbin.org/delay/3"));
-        Thread.sleep(6000);
+        Thread.sleep(1000);
     }
 
     private void print(InputStream inputStream) {

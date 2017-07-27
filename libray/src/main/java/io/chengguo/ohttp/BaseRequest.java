@@ -32,6 +32,8 @@ public abstract class BaseRequest implements IRequest {
     protected Map<String, String> params;
     protected Map<String, String> headers;
     protected String url;
+    private static final int CALLBACK_START = 1;
+    private static final int CALLBACK_SUCCESS = 2;
 
     public BaseRequest(BaseRequestBuilder requestBuilder) {
         url = requestBuilder.url;
@@ -67,7 +69,7 @@ public abstract class BaseRequest implements IRequest {
                     try {
                         if (!filterException(e)) {
                             httpRequestListener.onError(e);
-                        }
+                        } else e.printStackTrace();
                     } catch (Exception ee) {
                     }
                 } finally {
