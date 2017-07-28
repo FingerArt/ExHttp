@@ -10,8 +10,8 @@ import java.util.Map;
 public abstract class BaseRequestBuilder<T> {
     protected String url;
     protected Map<String, String> queries;
-    protected Map<String, String> params;
     protected Map<String, String> headers;
+    protected Map<String, String> cookies;
 
     /**
      * 设置Url
@@ -59,27 +59,64 @@ public abstract class BaseRequestBuilder<T> {
     }
 
     /**
+     * 添加请求头
+     *
+     * @param headers
+     * @return
+     */
+    public T addHeader(Map<String, String> headers) {
+        prepareHeaders();
+        headers.putAll(headers);
+        return (T) this;
+    }
+
+    /**
+     * 添加cookie
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public T addCookie(String key, String value) {
+        prepareCookies();
+        cookies.put(key, value);
+        return ((T) this);
+    }
+
+    /**
+     * 添加cookie
+     *
+     * @param cookies
+     * @return
+     */
+    public T addCookie(Map<String, String> cookies) {
+        prepareCookies();
+        cookies.putAll(cookies);
+        return ((T) this);
+    }
+
+    /**
      * 构建请求
      *
      * @return
      */
     public abstract IRequest build();
 
-    protected void prepareQueries() {
+    protected synchronized void prepareQueries() {
         if (queries == null) {
             queries = new LinkedHashMap<>();
         }
     }
 
-    protected void prepareParams() {
-        if (params == null) {
-            params = new LinkedHashMap<>();
+    private synchronized void prepareHeaders() {
+        if (headers == null) {
+            headers = new LinkedHashMap<>();
         }
     }
 
-    private void prepareHeaders() {
-        if (headers == null) {
-            headers = new LinkedHashMap<>();
+    private void prepareCookies() {
+        if (cookies == null) {
+            cookies = new LinkedHashMap<>();
         }
     }
 }

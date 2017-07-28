@@ -14,7 +14,7 @@ class GetRequest extends BaseRequest {
     }
 
     @Override
-    protected void prepareMethod(HttpURLConnection connection) throws ProtocolException {
+    protected void prepareRequest(HttpURLConnection connection) throws ProtocolException {
         connection.setRequestMethod("GET");
         connection.setDoInput(true);
     }

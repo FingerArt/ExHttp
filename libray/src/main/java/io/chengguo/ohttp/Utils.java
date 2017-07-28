@@ -9,6 +9,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -152,7 +155,7 @@ class Utils {
      * @param is
      * @return
      */
-    public static String outputString(InputStream is) {
+    static String outputString(InputStream is) {
         StringBuilder sb = new StringBuilder();
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         String str;
@@ -166,13 +169,39 @@ class Utils {
         return sb.toString();
     }
 
+    static void inputStream2outputStream(InputStream is, OutputStream out) throws IOException {
+        try {
+            byte[] b = new byte[1024 * 32];
+            int len;
+            while ((len = is.read(b)) != -1) {
+                out.write(b, 0, len);
+            }
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
     /**
      * 生成Tag
      *
      * @param text
      * @return
      */
-    public static String generateTag(String text) {
+    static String generateTag(String text) {
         return text;
+    }
+
+    /**
+     * 获取文件 Mime Type
+     *
+     * @param path
+     * @return
+     */
+    static String getFileType(String path) {
+        FileNameMap fileNameMap = URLConnection.getFileNameMap();
+        return fileNameMap.getContentTypeFor(path);
     }
 }

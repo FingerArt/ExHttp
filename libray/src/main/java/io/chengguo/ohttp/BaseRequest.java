@@ -12,6 +12,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,17 +30,15 @@ import static io.chengguo.ohttp.Utils.mergeUrl;
 public abstract class BaseRequest implements IRequest {
     private static final String TAG = "BaseRequest";
     protected Map<String, String> queries;
-    protected Map<String, String> params;
     protected Map<String, String> headers;
+    protected Map<String, String> cookies;
     protected String url;
-    private static final int CALLBACK_START = 1;
-    private static final int CALLBACK_SUCCESS = 2;
 
     public BaseRequest(BaseRequestBuilder requestBuilder) {
         url = requestBuilder.url;
         queries = requestBuilder.queries;
-        params = requestBuilder.params;
         headers = requestBuilder.headers;
+        cookies = requestBuilder.cookies;
     }
 
     @Override
@@ -47,7 +46,7 @@ public abstract class BaseRequest implements IRequest {
         safeCheck();
         HttpURLConnection connection = getConnection();
         connection.connect();
-        transferInputStream(connection);
+        transferOutputStream(connection);
         return connection;
     }
 
@@ -88,7 +87,7 @@ public abstract class BaseRequest implements IRequest {
      *
      * @param connection
      */
-    protected void transferInputStream(HttpURLConnection connection) throws IOException {
+    protected void transferOutputStream(HttpURLConnection connection) throws Exception {
     }
 
     /**
@@ -97,7 +96,7 @@ public abstract class BaseRequest implements IRequest {
      * @param connection
      * @throws Exception
      */
-    protected abstract void prepareMethod(HttpURLConnection connection) throws Exception;
+    protected abstract void prepareRequest(HttpURLConnection connection) throws Exception;
 
     private void safeCheck() throws Exception {
         if (TextUtils.isEmpty(url)) {
@@ -108,8 +107,9 @@ public abstract class BaseRequest implements IRequest {
     private HttpURLConnection getConnection() throws Exception {
         HttpURLConnection connection = (HttpURLConnection) new URL(mergeUrl(url, queries)).openConnection();
 
-        prepareMethod(connection);
+        prepareRequest(connection);
         setHeaders(connection);
+        setCookies(connection);
 
         //common set
         connection.setUseCaches(false);
@@ -134,6 +134,22 @@ public abstract class BaseRequest implements IRequest {
         for (Map.Entry<String, String> header : entries) {
             connection.setRequestProperty(header.getKey(), header.getValue());
         }
+    }
+
+    private void setCookies(HttpURLConnection connection) {
+        if (cookies == null) {
+            return;
+        }
+        StringBuilder cookieStr = new StringBuilder();
+        Iterator<Map.Entry<String, String>> iterator = cookies.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> cookie = iterator.next();
+            cookieStr.append(cookie.getKey()).append("=").append(cookie.getValue());
+            if (iterator.hasNext()) {
+                cookieStr.append("; ");
+            }
+        }
+        connection.setRequestProperty("Cookie", cookieStr.toString());
     }
 
     /**

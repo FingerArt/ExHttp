@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
@@ -65,6 +66,12 @@ public class GHttpTest {
         Thread.sleep(10000);
         OHttp.cancel(Utils.generateTag("http://httpbin.org/delay/3"));
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void cookieTest() throws Exception {
+        HttpURLConnection connection = OHttp.post().url("http://httpbin.org/post").addFile("file", new File("")).addParam("hel", "lo").addCookie("SESSIONID", "abcdefg").addCookie("device", "android").build().execute();
+        print(connection.getInputStream());
     }
 
     private void print(InputStream inputStream) {

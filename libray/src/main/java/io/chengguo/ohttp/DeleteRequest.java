@@ -12,8 +12,8 @@ public class DeleteRequest extends PostRequest {
     }
 
     @Override
-    protected void prepareMethod(HttpURLConnection connection) throws Exception {
-        super.prepareMethod(connection);
+    protected void prepareRequest(HttpURLConnection connection) throws Exception {
+        super.prepareRequest(connection);
         connection.setRequestMethod("DELETE");
     }
 }
