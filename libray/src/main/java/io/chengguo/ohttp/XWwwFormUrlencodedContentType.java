@@ -11,7 +11,7 @@ import static io.chengguo.ohttp.Utils.xWwwFormUrlencoded;
  * @author FingerArt http://fingerart.me
  * @date 2017年07月28日 16:22
  */
-class XWwwFormUrlencodedContentType implements IContentType {
+class XWwwFormUrlencodedContentType extends DefaultContentType {
     @Override
     public String contentType() {
         return "application/x-www-form-urlencoded";

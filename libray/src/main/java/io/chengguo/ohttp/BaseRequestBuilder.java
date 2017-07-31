@@ -1,5 +1,6 @@
 package io.chengguo.ohttp;
 
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ public abstract class BaseRequestBuilder<T> {
     protected Map<String, String> queries;
     protected Map<String, String> headers;
     protected Map<String, String> cookies;
+    protected InputStream sslInputStream;
+    protected String sslPassword;
 
     /**
      * 设置Url
@@ -92,6 +95,12 @@ public abstract class BaseRequestBuilder<T> {
     public T addCookie(Map<String, String> cookies) {
         prepareCookies();
         cookies.putAll(cookies);
+        return ((T) this);
+    }
+
+    public T ssl(InputStream inputStream, String password) {
+        sslInputStream = inputStream;
+        sslPassword = password;
         return ((T) this);
     }
 

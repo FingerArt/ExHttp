@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
@@ -70,8 +69,13 @@ public class GHttpTest {
 
     @Test
     public void cookieTest() throws Exception {
-        HttpURLConnection connection = OHttp.post().url("http://httpbin.org/post").addFile("file", new File("")).addParam("hel", "lo").addCookie("SESSIONID", "abcdefg").addCookie("device", "android").build().execute();
-        print(connection.getInputStream());
+        OHttp.post()
+                .url("http://httpbin.org/post")
+                .json("{\"kk\":\"vv\"}")
+                .addCookie("SESSIONID", "abcdefg")
+                .addCookie("device", "android")
+                .build()
+                .execute();
     }
 
     private void print(InputStream inputStream) {

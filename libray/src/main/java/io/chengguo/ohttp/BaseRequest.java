@@ -18,9 +18,11 @@ import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static io.chengguo.ohttp.Utils.HANDLER;
 import static io.chengguo.ohttp.Utils.HOSTNAME_VERIFIER;
 import static io.chengguo.ohttp.Utils.THREAD_POOL;
 import static io.chengguo.ohttp.Utils.generateTag;
+import static io.chengguo.ohttp.Utils.getSSL;
 import static io.chengguo.ohttp.Utils.mergeUrl;
 
 /**
@@ -29,6 +31,8 @@ import static io.chengguo.ohttp.Utils.mergeUrl;
  */
 public abstract class BaseRequest implements IRequest {
     private static final String TAG = "BaseRequest";
+    protected final InputStream sslInputStream;
+    protected final String sslPassword;
     protected Map<String, String> queries;
     protected Map<String, String> headers;
     protected Map<String, String> cookies;
@@ -39,6 +43,8 @@ public abstract class BaseRequest implements IRequest {
         queries = requestBuilder.queries;
         headers = requestBuilder.headers;
         cookies = requestBuilder.cookies;
+        sslInputStream = requestBuilder.sslInputStream;
+        sslPassword = requestBuilder.sslPassword;
     }
 
     @Override
@@ -58,25 +64,40 @@ public abstract class BaseRequest implements IRequest {
             public void run() {
                 String tag = generateTag(url);
                 try {
-                    httpRequestListener.onStart();
-                    HttpURLConnection connection = execute();
+                    HANDLER.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            httpRequestListener.onStart();
+                        }
+                    });
+                    final HttpURLConnection connection = execute();
                     OHttp.addTag(tag, connection);
-                    InputStream inputStream = connection.getInputStream();//start fetch
-                    int responseCode = connection.getResponseCode();
-                    httpRequestListener.onSuccess(responseCode, inputStream, connection);
-                } catch (Exception e) {
-                    try {
-                        if (!filterException(e)) {
-                            httpRequestListener.onError(e);
-                        } else e.printStackTrace();
-                    } catch (Exception ee) {
-                    }
+                    final InputStream inputStream = connection.getInputStream();//start fetch
+                    final int responseCode = connection.getResponseCode();
+                    httpRequestListener.onSuccess(responseCode, inputStream, connection);//in thread
+                } catch (final Exception e) {
+                    HANDLER.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                if (!filterException(e)) {
+                                    httpRequestListener.onError(e);
+                                } else e.printStackTrace();
+                            } catch (Exception ee) {
+                            }
+                        }
+                    });
                 } finally {
                     OHttp.cancel(tag);
-                    try {
-                        httpRequestListener.onFinish();
-                    } catch (Exception ee) {
-                    }
+                    HANDLER.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                httpRequestListener.onFinish();
+                            } catch (Exception ee) {
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -167,7 +188,7 @@ public abstract class BaseRequest implements IRequest {
     protected void setSSL(HttpURLConnection connection) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
         if (connection instanceof HttpsURLConnection) {
             HttpsURLConnection https = (HttpsURLConnection) connection;
-            https.setSSLSocketFactory(Utils.getSSL());
+            https.setSSLSocketFactory(getSSL(sslInputStream, sslPassword));
             https.setHostnameVerifier(HOSTNAME_VERIFIER);
         }
     }

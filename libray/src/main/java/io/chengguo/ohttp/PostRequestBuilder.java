@@ -11,7 +11,8 @@ import java.util.Map;
 public class PostRequestBuilder extends BaseRequestBuilder<PostRequestBuilder> {
     protected Map<String, String> params;
     protected Map<String, File> files;
-    protected IContentType contentTypeHandler = new FormDataContentType();
+    protected IContentType contentTypeHandler = new DefaultContentType();
+    protected String raw;
 
     /**
      * 像Body中添加参数
@@ -48,6 +49,12 @@ public class PostRequestBuilder extends BaseRequestBuilder<PostRequestBuilder> {
 
     public PostRequestBuilder formData() {
         contentTypeHandler = new FormDataContentType();
+        return this;
+    }
+
+    public PostRequestBuilder json(String raw) {
+        this.raw = raw;
+        contentTypeHandler = new JsonContentType();
         return this;
     }
 

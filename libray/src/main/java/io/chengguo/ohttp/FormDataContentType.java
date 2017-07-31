@@ -15,7 +15,7 @@ import static io.chengguo.ohttp.Utils.inputStream2outputStream;
  * @author FingerArt http://fingerart.me
  * @date 2017年07月28日 16:30
  */
-class FormDataContentType implements IContentType {
+class FormDataContentType extends DefaultContentType {
     private static final String BOUNDARY = "------WebKitFormBoundarygiFNTzqCQ01yutx4";
 
     @Override

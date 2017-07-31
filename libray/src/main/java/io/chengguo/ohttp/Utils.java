@@ -1,5 +1,7 @@
 package io.chengguo.ohttp;
 
+import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -109,7 +111,6 @@ class Utils {
         return sslContext.getSocketFactory();
     }
 
-
     static SSLSocketFactory getSSL(String sslPath, String password)
             throws NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException, UnrecoverableKeyException, KeyManagementException {
         return getSSL(new FileInputStream(sslPath), password);
@@ -203,5 +204,20 @@ class Utils {
     static String getFileType(String path) {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
         return fileNameMap.getContentTypeFor(path);
+    }
+
+    /**
+     * 获取Context
+     *
+     * @return
+     */
+    static Context applicationContext() {
+        try {
+            Application app = (Application) Class.forName("android.app.ActivityThread").getMethod("currentApplication").invoke(null, (Object[]) null);
+            return app.getApplicationContext();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

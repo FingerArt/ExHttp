@@ -22,5 +22,4 @@ public interface IRequest {
      * @param httpRequestListener
      */
     void execute(IGHttpRequestCallback httpRequestListener);
-
 }
