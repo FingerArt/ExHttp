@@ -67,24 +67,27 @@ public abstract class BaseRequest implements IRequest {
                     HANDLER.post(new Runnable() {
                         @Override
                         public void run() {
-                            httpRequestListener.onStart();
+                    httpRequestListener.onStart();
                         }
                     });
-                    final HttpURLConnection connection = execute();
+                    HttpURLConnection connection = execute();
                     OHttp.addTag(tag, connection);
-                    final InputStream inputStream = connection.getInputStream();//start fetch
-                    final int responseCode = connection.getResponseCode();
+                    int responseCode = connection.getResponseCode();//start fetch
+                    InputStream inputStream = responseCode == HttpURLConnection.HTTP_OK ?
+                            connection.getInputStream()
+                            :
+                            connection.getErrorStream();
                     httpRequestListener.onSuccess(responseCode, inputStream, connection);//in thread
                 } catch (final Exception e) {
                     HANDLER.post(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                if (!filterException(e)) {
-                                    httpRequestListener.onError(e);
-                                } else e.printStackTrace();
-                            } catch (Exception ee) {
-                            }
+                    try {
+                        if (!filterException(e)) {
+                            httpRequestListener.onError(e);
+                        } else e.printStackTrace();
+                    } catch (Exception ee) {
+                    }
                         }
                     });
                 } finally {
@@ -92,10 +95,10 @@ public abstract class BaseRequest implements IRequest {
                     HANDLER.post(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                httpRequestListener.onFinish();
-                            } catch (Exception ee) {
-                            }
+                    try {
+                        httpRequestListener.onFinish();
+                    } catch (Exception ee) {
+                    }
                         }
                     });
                 }

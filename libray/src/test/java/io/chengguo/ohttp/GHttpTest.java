@@ -61,10 +61,8 @@ public class GHttpTest {
                 System.out.println("GHttpTest.onFinish");
             }
         };
-        OHttp.get().url("http://httpbin.org/delay/9").addQuery("q1", "qv1").build().execute(callback);
+        OHttp.get().url("http://httpbin.org/kkkkk").addQuery("q1", "qv1").build().execute(callback);
         Thread.sleep(10000);
-        OHttp.cancel(Utils.generateTag("http://httpbin.org/delay/3"));
-        Thread.sleep(1000);
     }
 
     @Test
