@@ -67,13 +67,34 @@ public class GHttpTest {
 
     @Test
     public void cookieTest() throws Exception {
+        IGHttpRequestCallback callback = new GHttpSampleRequestCallback() {
+        @Override
+        public void onStart() {
+            System.out.println("GHttpTest.onStart");
+        }
+
+        @Override
+        public void onSuccess(int responseCode, InputStream inputStream, HttpURLConnection connection) {
+            System.out.println("responseCode = [" + responseCode + "], inputStream = [" + inputStream + "], connection = [" + connection + "]");
+            print(inputStream);
+        }
+
+        @Override
+        public void onError(Exception e) {
+            System.out.println("GHttpTest.onError: " + e.toString());
+        }
+
+        @Override
+        public void onFinish() {
+            System.out.println("GHttpTest.onFinish");
+        }
+    };
         OHttp.post()
-                .url("http://httpbin.org/post")
-                .json("{\"kk\":\"vv\"}")
-                .addCookie("SESSIONID", "abcdefg")
-                .addCookie("device", "android")
+                .url("https://test.dh-data.com:8001/webapi/evidence/obtainId")
+                .addCookie("Cookie", "session.id=1700611f-2129-49ab-9366-bd2d34dac76d")
                 .build()
-                .execute();
+                .execute(callback);
+        Thread.sleep(10000);
     }
 
     private void print(InputStream inputStream) {

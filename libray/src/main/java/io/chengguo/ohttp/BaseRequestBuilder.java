@@ -69,7 +69,7 @@ public abstract class BaseRequestBuilder<T> {
      */
     public T addHeader(Map<String, String> headers) {
         prepareHeaders();
-        headers.putAll(headers);
+        this.headers.putAll(headers);
         return (T) this;
     }
 
@@ -94,7 +94,7 @@ public abstract class BaseRequestBuilder<T> {
      */
     public T addCookie(Map<String, String> cookies) {
         prepareCookies();
-        cookies.putAll(cookies);
+        this.cookies.putAll(cookies);
         return ((T) this);
     }
 
