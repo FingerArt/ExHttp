@@ -67,7 +67,7 @@ public abstract class BaseRequest implements IRequest {
                     HANDLER.post(new Runnable() {
                         @Override
                         public void run() {
-                    httpRequestListener.onStart();
+                            httpRequestListener.onStart();
                         }
                     });
                     HttpURLConnection connection = execute();
@@ -82,12 +82,12 @@ public abstract class BaseRequest implements IRequest {
                     HANDLER.post(new Runnable() {
                         @Override
                         public void run() {
-                    try {
-                        if (!filterException(e)) {
-                            httpRequestListener.onError(e);
-                        } else e.printStackTrace();
-                    } catch (Exception ee) {
-                    }
+                            try {
+                                if (!filterException(e)) {
+                                    httpRequestListener.onError(e);
+                                } else e.printStackTrace();
+                            } catch (Exception ee) {
+                            }
                         }
                     });
                 } finally {
@@ -95,10 +95,10 @@ public abstract class BaseRequest implements IRequest {
                     HANDLER.post(new Runnable() {
                         @Override
                         public void run() {
-                    try {
-                        httpRequestListener.onFinish();
-                    } catch (Exception ee) {
-                    }
+                            try {
+                                httpRequestListener.onFinish();
+                            } catch (Exception ee) {
+                            }
                         }
                     });
                 }
@@ -139,7 +139,7 @@ public abstract class BaseRequest implements IRequest {
         connection.setUseCaches(false);
         connection.setReadTimeout(8 * 1000);
         connection.setConnectTimeout(8 * 1000);
-        connection.setRequestProperty("User-Agent", "OHttp");
+        connection.setRequestProperty("User-Agent", "OHttp " + BuildConfig.VERSION_NAME);
 
         setSSL(connection);
         return connection;

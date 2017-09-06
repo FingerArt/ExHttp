@@ -97,6 +97,13 @@ public class GHttpTest {
         Thread.sleep(10000);
     }
 
+    @Test
+    public void state() throws Exception {
+        HttpURLConnection connection = OHttp.get().url("https://github.com/asdfafsafsa").build().execute();
+        System.out.println(connection.getResponseCode());
+        print(connection.getInputStream());
+    }
+
     private void print(InputStream inputStream) {
         System.out.println(Utils.outputString(inputStream));
     }
