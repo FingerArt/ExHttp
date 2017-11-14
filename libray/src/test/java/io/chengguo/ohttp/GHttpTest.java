@@ -68,27 +68,27 @@ public class GHttpTest {
     @Test
     public void cookieTest() throws Exception {
         IGHttpRequestCallback callback = new GHttpSampleRequestCallback() {
-        @Override
-        public void onStart() {
-            System.out.println("GHttpTest.onStart");
-        }
+            @Override
+            public void onStart() {
+                System.out.println("GHttpTest.onStart");
+            }
 
-        @Override
-        public void onSuccess(int responseCode, InputStream inputStream, HttpURLConnection connection) {
-            System.out.println("responseCode = [" + responseCode + "], inputStream = [" + inputStream + "], connection = [" + connection + "]");
-            print(inputStream);
-        }
+            @Override
+            public void onSuccess(int responseCode, InputStream inputStream, HttpURLConnection connection) {
+                System.out.println("responseCode = [" + responseCode + "], inputStream = [" + inputStream + "], connection = [" + connection + "]");
+                print(inputStream);
+            }
 
-        @Override
-        public void onError(Exception e) {
-            System.out.println("GHttpTest.onError: " + e.toString());
-        }
+            @Override
+            public void onError(Exception e) {
+                System.out.println("GHttpTest.onError: " + e.toString());
+            }
 
-        @Override
-        public void onFinish() {
-            System.out.println("GHttpTest.onFinish");
-        }
-    };
+            @Override
+            public void onFinish() {
+                System.out.println("GHttpTest.onFinish");
+            }
+        };
         OHttp.post()
                 .url("https://test.dh-data.com:8001/webapi/evidence/obtainId")
                 .addCookie("Cookie", "session.id=1700611f-2129-49ab-9366-bd2d34dac76d")
@@ -99,7 +99,7 @@ public class GHttpTest {
 
     @Test
     public void state() throws Exception {
-        HttpURLConnection connection = OHttp.get().url("https://github.com/asdfafsafsa").build().execute();
+        HttpURLConnection connection = OHttp.get().url("http://httpbin.org/status/404").build().execute();
         System.out.println(connection.getResponseCode());
         print(connection.getInputStream());
     }
