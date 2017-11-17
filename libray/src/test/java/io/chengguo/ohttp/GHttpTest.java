@@ -99,7 +99,7 @@ public class GHttpTest {
 
     @Test
     public void state() throws Exception {
-        HttpURLConnection connection = OHttp.get().url("http://httpbin.org/status/404").build().execute();
+        HttpURLConnection connection = OHttp.get().url("http://httpbin.org/status/202").build().execute();
         System.out.println(connection.getResponseCode());
         print(connection.getInputStream());
     }

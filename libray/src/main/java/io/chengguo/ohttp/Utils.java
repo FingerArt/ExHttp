@@ -27,6 +27,7 @@ import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
@@ -219,5 +220,13 @@ class Utils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    static void runOnUiThread(Runnable runnable) {
+        HANDLER.post(runnable);
+    }
+
+    static Future<?> runOnThread(Runnable runnable) {
+        return THREAD_POOL.submit(runnable);
     }
 }

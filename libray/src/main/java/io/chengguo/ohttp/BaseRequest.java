@@ -18,12 +18,12 @@ import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static io.chengguo.ohttp.Utils.HANDLER;
 import static io.chengguo.ohttp.Utils.HOSTNAME_VERIFIER;
-import static io.chengguo.ohttp.Utils.THREAD_POOL;
 import static io.chengguo.ohttp.Utils.generateTag;
 import static io.chengguo.ohttp.Utils.getSSL;
 import static io.chengguo.ohttp.Utils.mergeUrl;
+import static io.chengguo.ohttp.Utils.runOnThread;
+import static io.chengguo.ohttp.Utils.runOnUiThread;
 
 /**
  * @author FingerArt http://fingerart.me
@@ -59,12 +59,12 @@ public abstract class BaseRequest implements IRequest {
     @Deprecated
     @Override
     public void execute(final IGHttpRequestCallback httpRequestListener) {
-        THREAD_POOL.execute(new Runnable() {
+        runOnThread(new Runnable() {
             @Override
             public void run() {
                 String tag = generateTag(url);
                 try {
-                    HANDLER.post(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             httpRequestListener.onStart();
@@ -79,7 +79,7 @@ public abstract class BaseRequest implements IRequest {
                             connection.getErrorStream();
                     httpRequestListener.onSuccess(responseCode, inputStream, connection);//in thread
                 } catch (final Exception e) {
-                    HANDLER.post(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
@@ -92,7 +92,7 @@ public abstract class BaseRequest implements IRequest {
                     });
                 } finally {
                     OHttp.cancel(tag);
-                    HANDLER.post(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
