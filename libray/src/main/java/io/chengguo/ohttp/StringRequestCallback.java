@@ -4,16 +4,17 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 
 import static io.chengguo.ohttp.Utils.HANDLER;
+import static io.chengguo.ohttp.Utils.runOnUiThread;
 
 /**
  * @author FingerArt http://fingerart.me
  * @date 2017年07月31日 17:20
  */
-public class OHttpStringRequestCallback extends GHttpSampleRequestCallback {
+public class StringRequestCallback extends GHttpSampleRequestCallback {
     @Override
     public void onSuccess(final int responseCode, InputStream inputStream, HttpURLConnection connection) {
         final String content = Utils.outputString(inputStream);
-        HANDLER.post(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 onSuccess(responseCode, content);
