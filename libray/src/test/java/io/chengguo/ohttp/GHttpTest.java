@@ -98,6 +98,11 @@ public class GHttpTest {
     }
 
     @Test
+    public void httpsTest() throws Exception {
+
+    }
+
+    @Test
     public void state() throws Exception {
         HttpURLConnection connection = OHttp.get().url("http://httpbin.org/status/202").build().execute();
         System.out.println(connection.getResponseCode());

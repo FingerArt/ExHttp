@@ -18,6 +18,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
@@ -56,65 +57,31 @@ class Utils {
         }
     };
 
-    static SSLSocketFactory getSSL() throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
-        return getSSL(((InputStream) null), null);
-    }
-
-    static SSLSocketFactory getSSL(InputStream inputStream, String password)
-            throws NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException, UnrecoverableKeyException, KeyManagementException {
-
-        KeyManager[] keyManagers = null;
-        TrustManager[] trustManagers;
-        if (inputStream != null) {
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-
-            InputStream sslIS = null;
-            Certificate certificate;
-            try {
-                sslIS = new BufferedInputStream(inputStream);
-                certificate = certificateFactory.generateCertificate(sslIS);
-            } finally {
-                if (sslIS != null) {
-                    sslIS.close();
-                }
+    static SSLSocketFactory getDefaultSSLSocketFactory() {
+        TrustManager[] trustManagers = new TrustManager[]{new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
             }
 
-            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
 
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("trust", certificate);
-
-            KeyManagerFactory keyFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            keyFactory.init(keyStore, password.toCharArray());
-            keyManagers = keyFactory.getKeyManagers();
-
-            TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustFactory.init(keyStore);
-            trustManagers = trustFactory.getTrustManagers();
-        } else {
-            trustManagers = new TrustManager[]{new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                @Override
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-            }};
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        }};
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustManagers, null);
+            return sslContext.getSocketFactory();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
         }
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(keyManagers, trustManagers, new SecureRandom());
-        return sslContext.getSocketFactory();
-    }
-
-    static SSLSocketFactory getSSL(String sslPath, String password)
-            throws NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException, UnrecoverableKeyException, KeyManagementException {
-        return getSSL(new FileInputStream(sslPath), password);
+        return null;
     }
 
     /**

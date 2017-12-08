@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             InputStream ssl = getAssets().open("cer/ssl.p12");
             OHttp.post()
-                    .url("https://10.168.1.242:8888/webapi/users/login")
+                    .url("http://10.168.1.242:8888/webapi/users/login")
                     .json("{\"username\":\"zhangming\",\"password\":\"123456\"}")
                     .build()
                     .execute(new GHttpSampleRequestCallback() {

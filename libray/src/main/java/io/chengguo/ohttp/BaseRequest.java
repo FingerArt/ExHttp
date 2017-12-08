@@ -10,17 +10,20 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 import static io.chengguo.ohttp.Utils.HOSTNAME_VERIFIER;
 import static io.chengguo.ohttp.Utils.generateTag;
-import static io.chengguo.ohttp.Utils.getSSL;
+import static io.chengguo.ohttp.Utils.getDefaultSSLSocketFactory;
 import static io.chengguo.ohttp.Utils.mergeUrl;
 import static io.chengguo.ohttp.Utils.runOnThread;
 import static io.chengguo.ohttp.Utils.runOnUiThread;
@@ -31,8 +34,8 @@ import static io.chengguo.ohttp.Utils.runOnUiThread;
  */
 public abstract class BaseRequest implements IRequest {
     private static final String TAG = "BaseRequest";
-    protected final InputStream sslInputStream;
-    protected final String sslPassword;
+    protected final SSLSocketFactory sslSocketFactory;
+    protected final HostnameVerifier hostnameVerifier;
     protected Map<String, String> queries;
     protected Map<String, String> headers;
     protected Map<String, String> cookies;
@@ -43,8 +46,8 @@ public abstract class BaseRequest implements IRequest {
         queries = requestBuilder.queries;
         headers = requestBuilder.headers;
         cookies = requestBuilder.cookies;
-        sslInputStream = requestBuilder.sslInputStream;
-        sslPassword = requestBuilder.sslPassword;
+        sslSocketFactory = requestBuilder.sslSocketFactory;
+        hostnameVerifier = requestBuilder.hostnameVerifier;
     }
 
     @Override
@@ -188,11 +191,11 @@ public abstract class BaseRequest implements IRequest {
      * @throws KeyManagementException
      * @throws IOException
      */
-    protected void setSSL(HttpURLConnection connection) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+    protected void setSSL(HttpURLConnection connection) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException, NoSuchProviderException {
         if (connection instanceof HttpsURLConnection) {
             HttpsURLConnection https = (HttpsURLConnection) connection;
-            https.setSSLSocketFactory(getSSL(sslInputStream, sslPassword));
-            https.setHostnameVerifier(HOSTNAME_VERIFIER);
+            https.setSSLSocketFactory(sslSocketFactory == null ? getDefaultSSLSocketFactory() : sslSocketFactory);
+            https.setHostnameVerifier(hostnameVerifier == null ? HOSTNAME_VERIFIER : hostnameVerifier);
         }
     }
 

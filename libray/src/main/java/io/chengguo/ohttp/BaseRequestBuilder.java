@@ -1,8 +1,21 @@
 package io.chengguo.ohttp;
 
 import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import static io.chengguo.ohttp.Utils.HOSTNAME_VERIFIER;
+import static io.chengguo.ohttp.Utils.getDefaultSSLSocketFactory;
 
 /**
  * @author FingerArt http://fingerart.me
@@ -13,8 +26,8 @@ public abstract class BaseRequestBuilder<T> {
     protected Map<String, String> queries;
     protected Map<String, String> headers;
     protected Map<String, String> cookies;
-    protected InputStream sslInputStream;
-    protected String sslPassword;
+    protected SSLSocketFactory sslSocketFactory;
+    protected HostnameVerifier hostnameVerifier;
 
     /**
      * 设置Url
@@ -98,9 +111,14 @@ public abstract class BaseRequestBuilder<T> {
         return ((T) this);
     }
 
-    public T ssl(InputStream inputStream, String password) {
-        sslInputStream = inputStream;
-        sslPassword = password;
+    public T ssl(SSLSocketFactory sslSocketFactory) {
+        this.sslSocketFactory = sslSocketFactory;
+        return ((T) this);
+    }
+
+    public T ssl(SSLSocketFactory sslSocketFactory, HostnameVerifier hostnameVerifier) {
+        ssl(sslSocketFactory);
+        this.hostnameVerifier = hostnameVerifier;
         return ((T) this);
     }
 
