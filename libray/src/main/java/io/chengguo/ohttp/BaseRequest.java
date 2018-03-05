@@ -1,7 +1,5 @@
 package io.chengguo.ohttp;
 
-import android.text.TextUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -52,16 +50,19 @@ public abstract class BaseRequest implements IRequest {
 
     @Override
     public HttpURLConnection execute() throws Exception {
-        safeCheck();
         HttpURLConnection connection = getConnection();
         connection.connect();
-        transferOutputStream(connection);
-        return connection;
+        return transferOutputStream(connection);
+    }
+
+    public Response execute2() throws Exception {
+        HttpURLConnection connection = transferOutputStream(getConnection());
+        return Response.getResponseWithConnection(connection);
     }
 
     @Deprecated
     @Override
-    public void execute(final IGHttpRequestCallback httpRequestListener) {
+    public void execute(final IHttpRequestCallback httpRequestListener) {
         runOnThread(new Runnable() {
             @Override
             public void run() {
@@ -89,7 +90,7 @@ public abstract class BaseRequest implements IRequest {
                                 if (!filterException(e)) {
                                     httpRequestListener.onError(e);
                                 } else e.printStackTrace();
-                            } catch (Exception ee) {
+                            } catch (Exception ignored) {
                             }
                         }
                     });
@@ -100,7 +101,7 @@ public abstract class BaseRequest implements IRequest {
                         public void run() {
                             try {
                                 httpRequestListener.onFinish();
-                            } catch (Exception ee) {
+                            } catch (Exception ignored) {
                             }
                         }
                     });
@@ -114,7 +115,8 @@ public abstract class BaseRequest implements IRequest {
      *
      * @param connection
      */
-    protected void transferOutputStream(HttpURLConnection connection) throws Exception {
+    protected HttpURLConnection transferOutputStream(HttpURLConnection connection) throws Exception {
+        return connection;
     }
 
     /**
@@ -124,12 +126,6 @@ public abstract class BaseRequest implements IRequest {
      * @throws Exception
      */
     protected abstract void prepareRequest(HttpURLConnection connection) throws Exception;
-
-    private void safeCheck() throws Exception {
-        if (TextUtils.isEmpty(url)) {
-            throw new Exception("please set url");
-        }
-    }
 
     private HttpURLConnection getConnection() throws Exception {
         HttpURLConnection connection = (HttpURLConnection) new URL(mergeUrl(url, queries)).openConnection();
@@ -207,5 +203,10 @@ public abstract class BaseRequest implements IRequest {
      */
     private boolean filterException(Exception e) {
         return e instanceof SocketException;
+    }
+
+    @Override
+    public void cancel() {
+
     }
 }

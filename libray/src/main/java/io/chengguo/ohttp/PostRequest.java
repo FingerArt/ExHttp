@@ -35,7 +35,8 @@ class PostRequest extends BaseRequest {
     }
 
     @Override
-    protected void transferOutputStream(HttpURLConnection connection) throws Exception {
+    protected HttpURLConnection transferOutputStream(HttpURLConnection connection) throws Exception {
         contentTypeHandler.handle(connection, this);
+        return connection;
     }
 }

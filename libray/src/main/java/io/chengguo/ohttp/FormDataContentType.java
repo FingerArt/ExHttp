@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.Map;
 
+import static io.chengguo.ohttp.Utils.closeQuietly;
 import static io.chengguo.ohttp.Utils.getFileType;
 import static io.chengguo.ohttp.Utils.inputStream2outputStream;
 
@@ -65,7 +66,7 @@ class FormDataContentType extends DefaultContentType {
             outputStream.write(data.toString().getBytes("UTF-8"));
         }
         outputStream.flush();
-        outputStream.close();
+        closeQuietly(outputStream);
     }
 
     private boolean hasFiles(PostRequest request) {

@@ -21,5 +21,10 @@ public interface IRequest {
      *
      * @param httpRequestListener
      */
-    void execute(IGHttpRequestCallback httpRequestListener);
+    void execute(IHttpRequestCallback httpRequestListener);
+
+    /**
+     * 取消
+     */
+    void cancel();
 }

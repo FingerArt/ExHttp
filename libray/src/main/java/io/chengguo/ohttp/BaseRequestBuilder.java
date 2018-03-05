@@ -1,21 +1,10 @@
 package io.chengguo.ohttp;
 
-import java.io.InputStream;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import static io.chengguo.ohttp.Utils.HOSTNAME_VERIFIER;
-import static io.chengguo.ohttp.Utils.getDefaultSSLSocketFactory;
 
 /**
  * @author FingerArt http://fingerart.me
@@ -36,6 +25,8 @@ public abstract class BaseRequestBuilder<T> {
      */
     public T url(String url) {
         this.url = url;
+//        "please set url"
+        // TODO: 2018/3/5 解析URL并检测
         return (T) this;
     }
 
@@ -64,13 +55,13 @@ public abstract class BaseRequestBuilder<T> {
     /**
      * 添加请求头
      *
-     * @param key
+     * @param name
      * @param value
      * @return
      */
-    public T addHeader(String key, String value) {
+    public T addHeader(String name, String value) {
         prepareHeaders();
-        headers.put(key, value);
+        headers.put(name, value);
         return (T) this;
     }
 

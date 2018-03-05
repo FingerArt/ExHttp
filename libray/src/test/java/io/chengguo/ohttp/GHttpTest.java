@@ -4,8 +4,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.CheckedOutputStream;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * @author FingerArt http://fingerart.me
@@ -39,7 +48,7 @@ public class GHttpTest {
 
     @Test
     public void delete_callback() throws Exception {
-        IGHttpRequestCallback callback = new GHttpSampleRequestCallback() {
+        IHttpRequestCallback callback = new GHttpSampleRequestCallback() {
             @Override
             public void onStart() {
                 System.out.println("GHttpTest.onStart");
@@ -67,7 +76,7 @@ public class GHttpTest {
 
     @Test
     public void cookieTest() throws Exception {
-        IGHttpRequestCallback callback = new GHttpSampleRequestCallback() {
+        IHttpRequestCallback callback = new GHttpSampleRequestCallback() {
             @Override
             public void onStart() {
                 System.out.println("GHttpTest.onStart");
@@ -104,9 +113,21 @@ public class GHttpTest {
 
     @Test
     public void state() throws Exception {
-        HttpURLConnection connection = OHttp.get().url("http://httpbin.org/status/202").build().execute();
+        HttpURLConnection connection = OHttp.get().url("http://httpbin.org/status/255").build().execute();
         System.out.println(connection.getResponseCode());
+        System.out.println(connection.getResponseMessage());
         print(connection.getInputStream());
+    }
+
+    @Test
+    public void okState() throws Exception {
+        OkHttpClient ok = new OkHttpClient.Builder().connectTimeout(3, TimeUnit.SECONDS).build();
+
+        Request request = new Request.Builder().get().url("http://httpbin.org/status/502").build();
+        Call call = ok.newCall(request);
+        Response response = call.execute();
+        System.out.println(response.code());
+        System.out.println(response.body().string());
     }
 
     private void print(InputStream inputStream) {

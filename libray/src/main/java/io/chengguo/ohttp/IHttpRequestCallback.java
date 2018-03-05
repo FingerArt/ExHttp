@@ -9,7 +9,7 @@ import java.net.HttpURLConnection;
  * @author FingerArt http://fingerart.me
  * @date 2017年05月18日 16:05
  */
-public interface IGHttpRequestCallback {
+public interface IHttpRequestCallback {
 
     /**
      * 开始请求

@@ -7,6 +7,7 @@ import android.os.Looper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -146,9 +147,17 @@ class Utils {
                 out.write(b, 0, len);
             }
         } finally {
+            closeQuietly(is);
+        }
+    }
+
+    static void closeQuietly(Closeable closeable) {
+        if (closeable != null) {
             try {
-                is.close();
-            } catch (IOException e) {
+                closeable.close();
+            } catch (RuntimeException rethrown) {
+                throw rethrown;
+            } catch (Exception ignored) {
             }
         }
     }
@@ -195,5 +204,9 @@ class Utils {
 
     static Future<?> runOnThread(Runnable runnable) {
         return THREAD_POOL.submit(runnable);
+    }
+
+    public static boolean isSuccessful(int code) {
+        return code >= 200 && code < 300;
     }
 }
