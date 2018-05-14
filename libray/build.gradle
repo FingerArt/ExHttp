@@ -8,7 +8,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -31,7 +31,6 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.8.9'
-    implementation 'com.squareup.okhttp3:okhttp:3.6.0'
 }
 
-apply from: "maven-push.gradle"
+apply from: "bintrayUpload.gradle"

@@ -1,0 +1,104 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file("local.properties").newDataInputStream())
+def bintrayUser = properties.getProperty("BINTRAY_USER")
+def bintrayApikey = properties.getProperty("BINTRAY_API_KEY")
+def versionName = android.defaultConfig.versionName
+
+group = PROJECT_GROUP_ID
+project.archivesBaseName = PROJECT_ARTIFACT_ID
+
+// This generates POM.xml with proper parameters
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                name PROJECT_NAME
+                groupId PROJECT_GROUP_ID
+                artifactId PROJECT_ARTIFACT_ID
+                version versionName
+                packaging PROJECT_PACKAGING
+                url PROJECT_SITE_URL
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id DEVELOPER_ID
+                        name DEVELOPER_NAME
+                        email DEVELOPERE_MAIL
+                    }
+                }
+                scm {
+                    connection PROJECT_GIT_URL
+                    developerConnection PROJECT_GIT_URL
+                    url PROJECT_SITE_URL
+                }
+            }
+        }
+    }
+}
+
+// This generates sources.jar
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+// Add compile dependencies to javadoc
+afterEvaluate {
+    javadoc.classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompile.classpath.files
+    })
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+// This generates javadoc.jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+// javadoc configuration
+javadoc {
+    options {
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        author true
+        version versionName
+        links "http://docs.oracle.com/javase/7/docs/api"
+        title PROJECT_NAME
+    }
+}
+
+// bintray configuration
+bintray {
+    user = bintrayUser
+    key = bintrayApikey
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = PROJECT_NAME
+        desc = PROJECT_DESCRIPTION
+        websiteUrl = PROJECT_SITE_URL
+        issueTrackerUrl = PROJECT_ISSUE_TRACKER_URL
+        vcsUrl = PROJECT_GIT_URL
+        licenses = ["Apache-2.0"]
+        publicDownloadNumbers = true
+        publish = true
+    }
+}
