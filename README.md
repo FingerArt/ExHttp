@@ -2,9 +2,9 @@
 
 A lightweight URLConnection HTTP wrapper library for android.
 
-[![Bintray](https://img.shields.io/bintray/v/fingerart/maven/ExHttp.svg)](https://bintray.com/fingerart/maven/ExHttp)
-
 ## Usage
+
+[![Bintray](https://img.shields.io/bintray/v/fingerart/maven/ExHttp.svg)](https://bintray.com/fingerart/maven/ExHttp)
 
 ```groovy
 compile 'io.chengguo.android:ExHttp:1.1.0'
