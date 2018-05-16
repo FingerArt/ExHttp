@@ -1,19 +1,26 @@
 package io.chengguo.exhttp;
 
+import static io.chengguo.exhttp.Utils.runOnThread;
 import static io.chengguo.exhttp.Utils.runOnUiThread;
 
 /**
  * @author FingerArt http://fingerart.me
  * @date 2017年07月31日 17:20
  */
-public abstract class StringRequestCallback extends GHttpSampleRequestCallback {
+public abstract class StringRequestCallback extends HttpSampleRequestCallback {
 
     @Override
     public void onSuccess(final Response response) {
-        runOnUiThread(new Runnable() {
+        runOnThread(new Runnable() {
             @Override
             public void run() {
-                onSuccess(response.code(), response.string());
+                final String string = response.string();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onSuccess(response.code(), string);
+                    }
+                });
             }
         });
     }

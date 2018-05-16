@@ -121,7 +121,8 @@ class Utils {
             while ((str = br.readLine()) != null) {
                 sb.append(str);
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return sb.toString();
     }

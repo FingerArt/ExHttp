@@ -9,7 +9,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @date 2017年05月18日 18:34
  */
 @RunWith(MockitoJUnitRunner.class)
-public class GHttpTest {
+public class ExHttpTest {
     @Test
     public void get() throws Exception {
         Response response = ExHttp.get().url("http://httpbin.org/get").addQuery("k1", "v1").addHeader("hello", "world").build().execute();
@@ -36,10 +36,10 @@ public class GHttpTest {
 
     @Test
     public void delete_callback() throws Exception {
-        IHttpRequestCallback callback = new GHttpSampleRequestCallback() {
+        IHttpRequestCallback callback = new HttpSampleRequestCallback() {
             @Override
             public void onStart() {
-                System.out.println("GHttpTest.onStart");
+                System.out.println("ExHttpTest.onStart");
             }
 
             @Override
@@ -49,12 +49,12 @@ public class GHttpTest {
 
             @Override
             public void onError(Exception e) {
-                System.out.println("GHttpTest.onError: " + e.toString());
+                System.out.println("ExHttpTest.onError: " + e.toString());
             }
 
             @Override
             public void onFinish() {
-                System.out.println("GHttpTest.onFinish");
+                System.out.println("ExHttpTest.onFinish");
             }
         };
         ExHttp.get().url("http://httpbin.org/kkkkk").addQuery("q1", "qv1").build().execute(callback);
@@ -63,10 +63,10 @@ public class GHttpTest {
 
     @Test
     public void cookieTest() throws Exception {
-        IHttpRequestCallback callback = new GHttpSampleRequestCallback() {
+        IHttpRequestCallback callback = new HttpSampleRequestCallback() {
             @Override
             public void onStart() {
-                System.out.println("GHttpTest.onStart");
+                System.out.println("ExHttpTest.onStart");
             }
 
             @Override
@@ -76,12 +76,12 @@ public class GHttpTest {
 
             @Override
             public void onError(Exception e) {
-                System.out.println("GHttpTest.onError: " + e.toString());
+                System.out.println("ExHttpTest.onError: " + e.toString());
             }
 
             @Override
             public void onFinish() {
-                System.out.println("GHttpTest.onFinish");
+                System.out.println("ExHttpTest.onFinish");
             }
         };
         ExHttp.post()
@@ -94,7 +94,6 @@ public class GHttpTest {
 
     @Test
     public void httpsTest() throws Exception {
-
     }
 
     @Test

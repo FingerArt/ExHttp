@@ -28,7 +28,8 @@ public final class Response implements Closeable {
             connection.connect();
         } catch (SocketTimeoutException timeout) {
             throw timeout;
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         int code = connection.getResponseCode();
         return new Builder()
